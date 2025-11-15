@@ -172,18 +172,17 @@
   const printPhoto = document.getElementById('print-photo');
   const printSound = new Audio('https://cdn.pixabay.com/audio/2021/09/13/audio_3e93956b4f.mp3'); // safe open sound
 
-  // Flickr JSONP loader
-  function loadFlickrFeed() {
-    const url = 'https://www.flickr.com/services/feeds/photos_public.gne?id=203880952@N08&format=json';
-    window.jsonFlickrFeed = function(data) {
-      photos = data.items.map(item => item.media.m.replace('_m.', '_b.'));
-      if (photos.length > 0) {
-        photo.src = photos[0];
-      }
-    };
-    const script = document.createElement('script');
-    script.src = url;
-    document.body.appendChild(script);
+  // Custom API loader
+  function loadPhotos() {
+    fetch('https://omelette-cameraproject-nicumh-6050c5-148-135-138-113.traefik.me/photos')
+      .then(r => r.json())
+      .then(data => {
+        photos = data.map(item => item.url.replace('_m.', '_b.'));
+        if (photos.length > 0) {
+          photo.src = photos[0];
+        }
+      })
+      .catch(err => console.error('Failed to load photos:', err));
   }
 
   document.getElementById('next').onclick = () => {
@@ -207,7 +206,7 @@
     printSound.play();
   };
 
-  loadFlickrFeed();
+  loadPhotos();
 </script>
 </body>
 </html>
